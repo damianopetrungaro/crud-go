@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/gorilla/mux"
-	"net/http"
 	"log"
+	"net/http"
 )
 
 func main() {
@@ -13,5 +13,5 @@ func main() {
 	router.HandleFunc("/users/{id}", GetUser).Methods("GET")
 	router.HandleFunc("/users", CreateUser).Methods("POST")
 	router.HandleFunc("/users/{id}", DeleteUser).Methods("DELETE")
-	log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":80", router))
 }

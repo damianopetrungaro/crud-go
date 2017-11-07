@@ -1,9 +1,9 @@
 package main
 
 import (
-	"net/http"
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 func ListUsers(w http.ResponseWriter, r *http.Request) {

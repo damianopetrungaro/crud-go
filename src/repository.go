@@ -6,8 +6,8 @@ import (
 )
 
 var users = []User{
-	{getLastId(), "John", "Doe", Address{"City X", "State X",},},
-	{getLastId(), "Koko", "Doe", Address{"City Z", "State Y",},},
+	{getLastId(), "John", "Doe", Address{"City X", "State X"}},
+	{getLastId(), "Koko", "Doe", Address{"City Z", "State Y"}},
 }
 
 func getLastId() string {
