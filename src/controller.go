@@ -6,19 +6,19 @@ import (
 	"net/http"
 )
 
-func ListUsers(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(list())
+func ListUsers(w http.ResponseWriter, _ *http.Request) {
+	json.NewEncoder(w).Encode(UserRepository.list(userRepo))
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	id := mux.Vars(r)["id"]
 
-	user, error := get(id)
+	user, err := UserRepository.get(userRepo, id)
 
-	if error != nil {
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(error)
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 
@@ -27,13 +27,14 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
 
-	user := User{Id: getLastId()}
+	user := User{}
 	json.NewDecoder(r.Body).Decode(&user)
-	error := add(user)
+	user.Id = UserRepository.getLastId(userRepo)
+	err := UserRepository.add(userRepo, user)
 
-	if error != nil {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error)
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 
@@ -43,21 +44,21 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 func UpdateUser(w http.ResponseWriter, r *http.Request) {
 
 	id := mux.Vars(r)["id"]
-	user, error := get(id)
+	user, err := UserRepository.get(userRepo, id)
 
-	if error != nil {
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(error)
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 
 	json.NewDecoder(r.Body).Decode(&user)
 	user.Id = id
-	error = update(user)
+	err = UserRepository.update(userRepo, user)
 
-	if error != nil {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error)
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 
@@ -67,19 +68,19 @@ func UpdateUser(w http.ResponseWriter, r *http.Request) {
 func DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 
-	_, error := get(id)
+	_, err := UserRepository.get(userRepo, id)
 
-	if error != nil {
+	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(error)
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 
-	error = remove(id)
+	err = UserRepository.remove(userRepo, id)
 
-	if error != nil {
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(error)
+		json.NewEncoder(w).Encode(err)
 		return
 	}
 

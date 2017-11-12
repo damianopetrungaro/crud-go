@@ -5,21 +5,34 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-var users = []User{
-	{getLastId(), "John", "Doe", Address{"City X", "State X"}},
-	{getLastId(), "Koko", "Doe", Address{"City Z", "State Y"}},
+type UserRepository interface {
+	getLastId() string
+	list() []User
+	get(id string) (User, error)
+	add(user User) error
+	update(user User) error
+	remove(id string) error
 }
 
-func getLastId() string {
+type UserRepositoryMemory struct {
+	users []User
+}
+
+var userRepo = UserRepositoryMemory{[]User{
+	{"3aaa392e-c7ca-11e7-b96c-0242c0a85002", "Damiano", "Petrungaro", Address{"Berlin", "Germany"}},
+	{"3aaa3994-c7ca-11e7-b96c-0242c0a85002", "Lorenzo", "D'Ianni", Address{"Milan", "Italy"}},
+}}
+
+func (repo UserRepositoryMemory) getLastId() string {
 	return uuid.NewV1().String()
 }
 
-func list() []User {
-	return users
+func (repo UserRepositoryMemory) list() []User {
+	return repo.users
 }
 
-func get(id string) (User, error) {
-	for _, user := range users {
+func (repo UserRepositoryMemory) get(id string) (User, error) {
+	for _, user := range repo.users {
 		if user.Id == id {
 			return user, nil
 		}
@@ -28,17 +41,17 @@ func get(id string) (User, error) {
 	return User{}, errors.New("user_not_found")
 }
 
-func add(user User) error {
-	users = append(users, user)
+func (repo UserRepositoryMemory) add(user User) error {
+	repo.users = append(repo.users, user)
 
 	return nil
 }
 
-func update(user User) error {
+func (repo UserRepositoryMemory) update(user User) error {
 
-	for key, stored_user := range users {
-		if stored_user.Id == user.Id {
-			users[key] = user
+	for key, storedUser := range repo.users {
+		if storedUser.Id == user.Id {
+			repo.users[key] = user
 			return nil
 		}
 	}
@@ -46,10 +59,10 @@ func update(user User) error {
 	return errors.New("user_not_found")
 }
 
-func remove(id string) error {
-	for index, user := range users {
+func (repo UserRepositoryMemory) remove(id string) error {
+	for index, user := range repo.users {
 		if user.Id == id {
-			users = append(users[:index], users[index+1:]...)
+			repo.users = append(repo.users[:index], repo.users[index+1:]...)
 			return nil
 		}
 	}

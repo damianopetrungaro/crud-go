@@ -2,8 +2,8 @@ package main
 
 type User struct {
 	Id        string
-	Firstname string
-	Lastname  string
+	FirstName string
+	LastName  string
 	Address   Address
 }
 
