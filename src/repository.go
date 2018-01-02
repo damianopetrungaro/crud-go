@@ -27,11 +27,11 @@ func (repo UserRepositoryMemory) getLastId() string {
 	return uuid.NewV1().String()
 }
 
-func (repo UserRepositoryMemory) list() []User {
+func (repo *UserRepositoryMemory) list() []User {
 	return repo.users
 }
 
-func (repo UserRepositoryMemory) get(id string) (User, error) {
+func (repo *UserRepositoryMemory) get(id string) (User, error) {
 	for _, user := range repo.users {
 		if user.Id == id {
 			return user, nil
@@ -41,13 +41,13 @@ func (repo UserRepositoryMemory) get(id string) (User, error) {
 	return User{}, errors.New("user_not_found")
 }
 
-func (repo UserRepositoryMemory) add(user User) error {
+func (repo *UserRepositoryMemory) add(user User) error {
 	repo.users = append(repo.users, user)
 
 	return nil
 }
 
-func (repo UserRepositoryMemory) update(user User) error {
+func (repo *UserRepositoryMemory) update(user User) error {
 
 	for key, storedUser := range repo.users {
 		if storedUser.Id == user.Id {
@@ -59,7 +59,7 @@ func (repo UserRepositoryMemory) update(user User) error {
 	return errors.New("user_not_found")
 }
 
-func (repo UserRepositoryMemory) remove(id string) error {
+func (repo *UserRepositoryMemory) remove(id string) error {
 	for index, user := range repo.users {
 		if user.Id == id {
 			repo.users = append(repo.users[:index], repo.users[index+1:]...)
